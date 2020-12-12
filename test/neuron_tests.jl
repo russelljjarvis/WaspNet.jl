@@ -19,6 +19,7 @@
         end
     end
 
+
     @testset "Izhikevich" begin
         izh = WaspNet.Izh()
         v0 = izh.v0
@@ -38,6 +39,29 @@
         @test begin
             izh = WaspNet.reset(izh)
             all((izh.v, izh.u) .== (v0, u0))
+        end                                 # Reset works
+    end
+
+
+    @testset "AdExp" begin
+        adexp = WaspNet.ADEXP()
+        v = adexp.v
+        w = adexp.w
+        @test all((adexp.v, adexp.w) .== (v, w))   # Constructor works
+
+        @test begin                         # Adding input to state without time evolution
+            (_, adexp) = update(adexp, 1, 0, 0)
+            all((adexp.v, adexp.w) .== (v0 + 1., u0))
+        end
+
+        @test begin                         # Time evolution changes the state
+            (_, adexp) = update(adexp, 0, 0.001, 0)
+            all((adexp.v, adexp.w) .!= (v0 + 1., u0))
+        end
+
+        @test begin
+            izh = WaspNet.reset(adexp)
+            all((adexp.v, adexp.w) .== (v0, u0))
         end                                 # Reset works
     end
 
@@ -67,7 +91,7 @@
 
         @test begin                         # Reset works
             n_tanh = WaspNet.reset(n_tanh)
-            n_tanh.state == 0. 
+            n_tanh.state == 0.
         end
     end
 
@@ -82,7 +106,7 @@
 
         @test begin                         # Reset works
             sigmoid = WaspNet.reset(sigmoid)
-            sigmoid.state == 0. 
+            sigmoid.state == 0.
         end
     end
 

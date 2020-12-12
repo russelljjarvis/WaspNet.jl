@@ -1,4 +1,5 @@
 include("neurons/LIF.jl")
+include("neurons/AdExp.jl")
 include("neurons/Izh.jl")
 include("neurons/functional_neurons.jl")
 
